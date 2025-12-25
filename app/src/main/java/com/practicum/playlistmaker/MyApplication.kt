@@ -1,10 +1,15 @@
 package com.practicum.playlistmaker
 
 import android.app.Application
-import com.practicum.playlistmaker.data.TracksRepositoryImpl
-import com.practicum.playlistmaker.domain.api.TracksRepository
+import com.practicum.playlistmaker.domain.api.TrackPlayer
+import com.practicum.playlistmaker.data.player.SimpleTrackPlayer
 
-class MyApplication: Application() {
+class MyApplication : Application() {
 
-    fun provideTrackSearchInteractor() = Creator.provideTrackSearchInteractor()
+    fun provideTracksInteractor() = Creator.provideTrackSearchInteractor()
+
+    fun provideTrackPlayer(): TrackPlayer {
+        return SimpleTrackPlayer()
+    }
 }
+

@@ -1,5 +1,6 @@
 import com.practicum.playlistmaker.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.data.network.RetrofitNetworkClient
+import com.practicum.playlistmaker.domain.api.TrackPlayer
 import com.practicum.playlistmaker.domain.api.TrackSearchInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.impl.TrackSearchInteractorImpl
@@ -12,4 +13,9 @@ object Creator {
     fun provideTrackSearchInteractor(): TrackSearchInteractor {
         return TrackSearchInteractorImpl(getTracksRepository())
     }
+
+    fun provideTrackPlayer(): TrackPlayer {
+        return com.practicum.playlistmaker.data.player.SimpleTrackPlayer()
+    }
+
 }
