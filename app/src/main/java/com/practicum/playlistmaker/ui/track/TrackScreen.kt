@@ -7,7 +7,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.practicum.playlistmaker.presentation.track.TrackScreenState
-import com.practicum.playlistmaker.presentation.track.PlayerStatus
 import com.practicum.playlistmaker.presentation.track.TrackViewModel
 
 @Composable

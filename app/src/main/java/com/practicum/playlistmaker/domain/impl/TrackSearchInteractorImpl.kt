@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.TrackSearchInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
+import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.models.TrackModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,5 +25,9 @@ class TrackSearchInteractorImpl(
             )
         } ?: TrackModel(id = trackId, name = "Track $trackId", author = "Unknown", pictureUrl = "")
         onComplete(trackModel)
+    }
+
+    override suspend fun getAllTracks(): List<Track> {
+        return repository.getAllTracks()
     }
 }
