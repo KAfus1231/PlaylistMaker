@@ -31,11 +31,10 @@ class TrackViewModel(
 
     init {
         Log.d("TEST", "TrackViewModel init!: $trackId")
-        // Загружаем данные
+
         viewModelScope.launch {
-            tracksInteractor.loadTrackData(trackId) { trackModel ->
-                _trackScreenState.value = TrackScreenState.Content(trackModel)
-            }
+            val trackModel = tracksInteractor.loadTrackData(trackId)
+            _trackScreenState.value = TrackScreenState.Content(trackModel)
         }
     }
 

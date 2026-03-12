@@ -4,6 +4,8 @@ import com.practicum.playlistmaker.data.dto.TracksSearchRequest
 import com.practicum.playlistmaker.data.dto.TracksSearchResponse
 import com.practicum.playlistmaker.domain.api.TracksRepository
 import com.practicum.playlistmaker.domain.models.Track
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
 
 private val listTracks = listOf(
@@ -21,16 +23,29 @@ private val listTracks = listOf(
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun searchTracks(expression: String): List<Track> {
-        val response = networkClient.doRequest(TracksSearchRequest(expression))
-        if (response.resultCode == 200) { // успешный запрос
-            return (response as TracksSearchResponse).results.map {
-                val seconds = it.trackTimeMillis / 1000
-                val minutes = seconds / 60
-                val trackTime = "%02d".format(minutes) + ":" + "%02d".format(seconds - minutes * 60)
-                Track(it.trackName, it.artistName, trackTime) }
-        } else {
-            return emptyList()
+    // <- сделали suspend и выполнили сетевой вызов в IO-контексте
+    override suspend fun searchTracks(expression: String): List<Track> {
+        return try {
+            val response = withContext(Dispatchers.IO) {
+                networkClient.doRequest(TracksSearchRequest(expression))
+            }
+
+            // безопасно приводим тип и проверяем код ответа
+            if (response is TracksSearchResponse && response.resultCode == 200) {
+                response.results.map { dto ->
+                    val seconds = dto.trackTimeMillis / 1000
+                    val minutes = seconds / 60
+                    // формат mm:ss (например 4:05)
+                    val trackTime = "%d:%02d".format(minutes, seconds - minutes * 60)
+                    Track(dto.trackName, dto.artistName, trackTime)
+                }
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            // логирование при необходимости
+            // Timber.e(e) или Log.e("TracksRepo", e.toString())
+            emptyList()
         }
     }
 
@@ -38,5 +53,4 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
         delay(1000)
         return listTracks
     }
-
 }
